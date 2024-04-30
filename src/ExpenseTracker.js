@@ -1,12 +1,15 @@
 class ExpenseTracker {
     constructor() {
         this.expense = [];
-        console.log('ExpenseTracker'.expense);
     }
 
     addExpense(expense) {
-        this.expense.push(expense);
+        // Create a new instance of ExpenseTracker with updated expenses array
+        const updatedTracker = new ExpenseTracker();
+        updatedTracker.expense = [...this.expense, expense];
+        return updatedTracker;
     }
+
 
     getExpense() {
         return this.expense;
