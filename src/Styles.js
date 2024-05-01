@@ -117,13 +117,46 @@ const styles = StyleSheet.create({
     date:{
         textAlign:'right',
     },
+    dateGroup:{
+        textAlign:'left',
+        fontWeight:'bold',
+        color:'gray',
+        fontSize:20,
+        alignItems:'center',
+        top:5,
+        left:5,
+    },
     loading:{
         color:'white',
         marginTop:50,
         textAlign:'center',
         fontWeight:'bold',
         fontSize:20,
-    }
+    },
+    modalButton: {
+        flexDirection:'column',
+        justifyContent:'center',
+        borderColor:'black',
+        borderWidth:1,
+        marginBottom:10,
+        borderRadius:10,
+        justifyContent:'center'
+        
+      },
+      button: {
+        backgroundColor: 'transparent',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderWidth: 1,
+        margin:11,
+        borderColor: 'black', // Border color for visibility
+      },
+      buttonText: {
+        color: '#dddddd', // Text color
+        textAlign: 'center',
+        fontSize: 16,
+        
+      },
 }
 )
 export default styles

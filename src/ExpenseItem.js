@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TextInput, TouchableOpacity, Keyboard } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Keyboard,Alert } from 'react-native';
 
 import styles from './Styles';
 import Expense from './Expense';
+import DatePick from './DatePicker';
 import ExpenseList from './ExpenseList';
 import ExpenseTracker from './ExpenseTracker';
  // Import the ExpenseTracker class
@@ -58,6 +59,12 @@ const ExpenseItem = () => {
     return date.toLocaleDateString(); // Use toLocaleDateString to format the date
   };
 
+  const handleSelectDate = (selectedDate) => {
+    setDate(selectedDate);
+  };
+  
+
+
   const updateExpenseList = () => {
     setExpenseTracker(new ExpenseTracker()); // Update the expenseTracker with a new instance
   };
@@ -81,12 +88,20 @@ const ExpenseItem = () => {
         onChangeText={setDescription}
         value={description}
       />
-      <TextInput
-        placeholder="Enter Date"
-        style={styles.input}
-        onChangeText={(text) => setDate(new Date(text))}
-        value={formatDate(date)}
-      />
+
+
+
+      <DatePick 
+        onSelectDate={handleSelectDate} 
+        date={date} 
+        setDate={setDate} 
+        />
+
+    
+
+
+
+
       <TouchableOpacity styles={styles.button} title="Add Expense" onPress={amount?handleAddExpense:handleAlert} >
         <Text style={styles.btnText}>Add Expense</Text>
       </TouchableOpacity>
