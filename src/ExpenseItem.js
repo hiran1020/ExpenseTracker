@@ -1,16 +1,34 @@
-import React, { useState } from 'react';
-import { Text, Alert, View, TextInput, TouchableOpacity, Keyboard } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 
 import styles from './Styles';
 import Expense from './Expense';
 import ExpenseList from './ExpenseList';
-import ExpenseTracker from './ExpenseTracker'; // Import the ExpenseTracker class
+import ExpenseTracker from './ExpenseTracker';
+ // Import the ExpenseTracker class
 
 const ExpenseItem = () => {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date());
   const [description, setDescription] = useState('');
-  const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker()); // Initialize expenseTracker with a new instance
+  const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker());
+   // Initialize expenseTracker with a new instance
+  const [totalExpenses, setTotalExpenses] = useState(0);
+
+  useEffect(() => {
+    const loadExpenseData = async () => {
+      try {
+        const storedTracker = new ExpenseTracker();
+        await storedTracker.loadExpenses();
+        setExpenseTracker(storedTracker);
+        setTotalExpenses(storedTracker.getTotalExpense());
+      } catch (error) {
+        console.error('Error loading expenses:', error);
+      }
+    };
+
+    loadExpenseData();
+  }, [description, amount]); 
 
   const handleAddExpense = () => {
     const newExpense = new Expense(
@@ -23,6 +41,7 @@ const ExpenseItem = () => {
     setAmount('');
     setDescription('');
     setDate(new Date());
+    setTotalExpenses(expenseTracker.getTotalExpense()); 
     Keyboard.dismiss();
   };
 
