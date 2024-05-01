@@ -116,6 +116,13 @@ const styles = StyleSheet.create({
     },
     date:{
         textAlign:'right',
+    },
+    loading:{
+        color:'white',
+        marginTop:50,
+        textAlign:'center',
+        fontWeight:'bold',
+        fontSize:20,
     }
 }
 )

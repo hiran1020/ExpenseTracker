@@ -1,51 +1,46 @@
 import React, { useState } from 'react';
-import { Text,Alert, View, TextInput, TouchableOpacity, Keyboard } from 'react-native';
+import { Text, Alert, View, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 
 import styles from './Styles';
 import Expense from './Expense';
 import ExpenseList from './ExpenseList';
-import ExpenseTracker from './ExpenseTracker';
+import ExpenseTracker from './ExpenseTracker'; // Import the ExpenseTracker class
 
 const ExpenseItem = () => {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date());
   const [description, setDescription] = useState('');
-  const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker());
+  const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker()); // Initialize expenseTracker with a new instance
 
   const handleAddExpense = () => {
     const newExpense = new Expense(
       Math.floor(Math.random() * 100000000),
       description,
       parseFloat(amount),
-      date.getTime(), 
-      // Use getTime() to get the timestamp
+      date.getTime()
     );
-    setExpenseTracker(prevExpenseTracker => {
-        const updatedTracker = prevExpenseTracker.addExpense(newExpense);
-        return updatedTracker;
-      });
+    expenseTracker.addExpense(newExpense); // Modify the existing expenseTracker object
     setAmount('');
     setDescription('');
     setDate(new Date());
     Keyboard.dismiss();
   };
- 
-  const handleAlert =()=> {
+
+  const handleAlert = () => {
     Alert.alert(
-
-        "Amount Please",
-
-        "Please Add Amount in Amount Field to Records",
-        [
-          { text: "OK", onPress: () => console.log("OK Pressed") }
-        ],
-        { cancelable: false } 
-        // Prevents dismissal by tapping outside of the alert
-      );
-  }
+      "Amount Please",
+      "Please Add Amount in Amount Field to Records",
+      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      { cancelable: false }
+    );
+  };
 
   const formatDate = (date) => {
     return date.toLocaleDateString(); // Use toLocaleDateString to format the date
+  };
+
+  const updateExpenseList = () => {
+    setExpenseTracker(new ExpenseTracker()); // Update the expenseTracker with a new instance
   };
 
   return (
@@ -81,7 +76,7 @@ const ExpenseItem = () => {
         <Text style={styles.totalExpenses}>
             Total Expenses: ${(expenseTracker.getTotalExpense() ? expenseTracker.getTotalExpense() : 1235)}
         </Text>
-        <ExpenseList expenseTracker={expenseTracker} />
+        <ExpenseList onExpenseAdded={updateExpenseList} expenseTracker={expenseTracker} />
 
     </View>
   );
