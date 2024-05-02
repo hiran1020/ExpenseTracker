@@ -1,12 +1,12 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 
-import ExpenseItem from './src/ExpenseItem'
+import LoginCheck from './src/Login/LoginCheck'
 
 const App = () => {
   return (
     <View>
-      <ExpenseItem />
+      <LoginCheck />
     </View>
   )
 }
