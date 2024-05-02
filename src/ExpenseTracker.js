@@ -1,10 +1,14 @@
+import '@react-native-firebase/database';
+import firebase from '@react-native-firebase/app';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 class ExpenseTracker {
     constructor() {
         this.expense = [];
         //initializing array as empty
         this.loadExpenses(); 
+        this.database = firebase.database();
         // Load expenses when creating a new instance
     }
 
@@ -29,14 +33,17 @@ class ExpenseTracker {
         }
     }
 
-    addExpense(expense) {
-        this.expense.push(expense);
+    async addExpense(expense, userId) {
+        await this.database.ref(`expenses/${userId}`).push(expense);
+        console.log("Expense added successfully");
         this.saveExpenses(); // Save expenses after adding a new expense
         console.log("------this-------",this); // Optionally log the updated tracker
     }
 
-    getExpense() {
-        return this.expense;
+    async getExpenses(userId) {
+        // Fetch expenses for the given userId from the database
+        const snapshot = await this.database.ref(`expenses/${userId}`).once('value');
+        return snapshot.val();
     }
 
     getTotalExpense(){

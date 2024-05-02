@@ -1,32 +1,32 @@
+import '@react-native-firebase/database';
+import firebase from '@react-native-firebase/app';
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 import styles from './Styles';
 
-const ExpenseList = ({ onExpenseAdded }) => {
+const ExpenseList = ({ userId }) => {
   const [expenseData, setExpenseData] = useState([]);
 
   useEffect(() => {
-    const loadExpenseData = async () => {
-      try {
-        const savedExpenses = await AsyncStorage.getItem('expenses');
-        if (savedExpenses !== null) {
-          // Parse the saved expenses
-          const parsedExpenses = JSON.parse(savedExpenses);
-          
-          // Group expenses by date
-          const groupedExpenses = groupExpensesByDate(parsedExpenses.reverse());
-
-          // Set the grouped expenses
-          setExpenseData(groupedExpenses);
-        }
-      } catch (error) {
-        console.error('Error loading expenses:', error);
+    const expenseRef = firebase.database().ref(`expenses/${userId}`);
+    
+    const handleData = (snapshot) => {
+      const expenses = snapshot.val();
+      if (expenses) {
+        const expenseArray = Object.values(expenses);
+        const groupedExpenses = groupExpensesByDate(expenseArray.reverse());
+        setExpenseData(groupedExpenses);
       }
     };
 
-    loadExpenseData();
-  }, [onExpenseAdded]);
+    // Attach listener for real-time updates
+    expenseRef.on('value', handleData);
+
+    // Detach the listener when component unmounts
+    return () => expenseRef.off('value', handleData);
+  }, [userId]);
 
   // Function to group expenses by date
   const groupExpensesByDate = (expenses) => {

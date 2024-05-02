@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+
+
+import styles from '../Styles';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [password, setPassword] = useState('');
 
   const handleSignUp = async () => {
     try {
@@ -20,7 +24,7 @@ const SignUp = () => {
 
   return (
     <View style={styles.login}>
-      <Text style={styles.title}>Sign Up</Text>
+      <Text style={styles.titleLogin}>Sign Up</Text>
       {error && <Text style={styles.error}>{error}</Text>}
       <TextInput
         style={styles.input}
@@ -29,15 +33,18 @@ const SignUp = () => {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
-      />
+        />
       <TextInput
         style={styles.input}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-      />
-      <Button title="Sign Up" onPress={handleSignUp} />
+        />
+
+        <TouchableOpacity style={[styles.button, !email || !password ? styles.disabledButton : null]} disabled={!email || !password} onPress={handleSignUp}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
     </View>
   );
 };

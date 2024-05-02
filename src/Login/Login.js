@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 
 import styles from '../Styles';
+import SignUp from './Signup';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +11,8 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [resetEmail, setResetEmail] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
-  const [isResetModalVisible, setIsResetModalVisible] = useState(false); // State for modal visibility
+  const [isResetModalVisible, setIsResetModalVisible] = useState(false); 
+  const [isSignUPModalVisible, setIsSignUPModalVisible] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -32,6 +34,10 @@ const Login = () => {
       console.error('Password reset error:', error.message);
       setError(error.message);
     }
+  };
+
+  const toggleSignUpModal = () => {
+    setIsSignUPModalVisible(!isSignUPModalVisible);
   };
 
   return (
@@ -59,6 +65,32 @@ const Login = () => {
 
       <View>
         <Text style={styles.buttonText} >Don't have an account? Create One </Text>
+        <View style={{ marginTop: 10 }}>
+        <TouchableOpacity style={styles.button} onPress={() => setIsSignUPModalVisible(true)}>
+          <Text style={styles.buttonText}>Create Account</Text>
+        </TouchableOpacity>
+
+
+        <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isSignUPModalVisible}
+        onRequestClose={toggleSignUpModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <SignUp />
+            <TouchableOpacity
+              style={[styles.button]}
+              onPress={() => setIsSignUPModalVisible(false)}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+            {/* Add any additional content or buttons if needed */}
+          </View>
+        </View>
+      </Modal>
+      </View>
       </View>
 
       <View style={{ marginTop: 10 }}>
@@ -66,6 +98,8 @@ const Login = () => {
           <Text style={styles.buttonText}>Reset Password</Text>
         </TouchableOpacity>
       </View>
+
+
 
       {/* Reset Password Modal */}
       <Modal
