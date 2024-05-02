@@ -18,7 +18,19 @@ const styles = StyleSheet.create({
         top:5,
         color:'#DDDDDD'
     },
+    titleLogin:{
+        padding:10,
+        fontSize:36,
+        color:'#DDDDDD'
+    },
     input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        color:'#DDDDDD',
+    },
+    inputLogin: {
         height: 40,
         margin: 12,
         borderWidth: 1,
@@ -50,7 +62,8 @@ const styles = StyleSheet.create({
     button:{
         alignItems: 'center',
         backgroundColor: '#DDDDDD',
-        padding: 10
+        padding: 10,
+
     },
     btnText:{
         color:'#DDDDDD',
@@ -117,13 +130,85 @@ const styles = StyleSheet.create({
     date:{
         textAlign:'right',
     },
+    dateGroup:{
+        textAlign:'left',
+        fontWeight:'bold',
+        color:'gray',
+        fontSize:20,
+        alignItems:'center',
+        top:5,
+        left:5,
+    },
     loading:{
         color:'white',
         marginTop:50,
         textAlign:'center',
         fontWeight:'bold',
         fontSize:20,
-    }
+    },
+    container: {
+        justifyContent: 'center',
+        padding: 20,
+        top:'50%'
+    
+      },
+      error: {
+        color: 'red',
+        marginBottom: 10,
+      },
+      input: {
+        width: '100%',
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+      },
+      modalContainer: {
+        justifyContent: 'flex-end',
+        backgroundColor:'transparent',
+        flex: 1,
+      },
+      modalContent: {
+        backgroundColor: 'transparent',
+        margin:10,
+        padding: 20,
+        borderRadius: 10,
+        elevation: 15,
+      },
+      success: {
+        color: 'green',
+        marginTop: 10,
+        marginBottom: 10,
+      },
+    modalButton: {
+        flexDirection:'column',
+        justifyContent:'center',
+        borderColor:'black',
+        borderWidth:1,
+        marginBottom:10,
+        borderRadius:10,
+        justifyContent:'center',
+        
+      },
+      button: {
+        backgroundColor: 'transparent',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderWidth: 1,
+        margin:11,
+        backgroundColor:"gray",
+        borderColor: 'black',
+        borderRadius: 10, // Border radius for visibility
+         // Border color for visibility
+      },
+      buttonText: {
+        color: '#dddddd', // Text color
+        textAlign: 'center',
+        fontSize: 16,
+        
+      },
 }
 )
 export default styles
