@@ -48,17 +48,18 @@ export default function LoginCheck() {
        <LoginScreen />
       );
   }
+ 
+
 
   return (
     <View>
-        <View style={{flexDirection:"row", justifyContent:"space-between", height:20}}>
-
-      <Text>Welcome {user.email}</Text>
-      <TouchableOpacity onPress={handleLogout}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
-        </View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 30 }}>
+        <Text style={{ fontSize: 16 }}>Welcome {user.email.split("@")[0]}</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={{ fontSize: 16 }}>Logout</Text>
+        </TouchableOpacity>
+      </View>
       <ExpenseItem />
     </View>
   );
-}
+}  
