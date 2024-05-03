@@ -7,12 +7,14 @@ import styles from './Styles';
 import DatePick from './DatePicker';
 import ExpenseList from './ExpenseList';
 import ExpenseTracker from './ExpenseTracker';
+import DropdownReason from './DropdownReason';
 
 const ExpenseItem = () => {
     const currentUser = auth().currentUser;
     const [amount, setAmount] = useState('');
     const [date, setDate] = useState(new Date());
     const [description, setDescription] = useState('');
+    const [exptype, setExptype] = useState('');
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker());
 
@@ -36,7 +38,7 @@ const ExpenseItem = () => {
       Alert.alert(
         "Amount Please",
         "Please Add Amount in Amount Field to Records",
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        [{ text: "OK"}],
         { cancelable: false }
       );
     };
@@ -48,6 +50,7 @@ const ExpenseItem = () => {
           id :  Math.floor(Math.random() * 100000000),
           description: description,
           amount: parseFloat(amount),
+          exptype: exptype,
           date: date.getTime()
       };
       if (currentUser) {
@@ -63,6 +66,7 @@ const ExpenseItem = () => {
       }
       setAmount('');
       setDescription('');
+      setExptype('');
       setDate(new Date());
       Keyboard.dismiss();
   };
@@ -74,6 +78,9 @@ const ExpenseItem = () => {
     const handleSelectDate = (selectedDate) => {
       setDate(selectedDate);
     };
+    const handleExpType = (expType) => {
+        setExptype(expType); // Set the selected expense type
+      };
 
     const calculateTotalExpenses = (expenses) => {
         let total = 0;
@@ -94,6 +101,7 @@ const ExpenseItem = () => {
     return (
         <View>
             <Text style={styles.title}>Expense Tracker</Text>
+         
             <View style={styles.form}>
                 <TextInput
                     placeholder="Enter Amount"
@@ -108,11 +116,15 @@ const ExpenseItem = () => {
                     onChangeText={setDescription}
                     value={description}
                 />
+                   <DropdownReason
+                    onSelectItem ={handleExpType}
+                    
+                   />
                 <DatePick 
-        onSelectDate={handleSelectDate} 
-        date={date} 
-        setDate={setDate} 
-        />
+                onSelectDate={handleSelectDate} 
+                    date={date} 
+                    setDate={setDate} 
+                     />
 
     
                 <TouchableOpacity  onPress={handleAddExpense}>
@@ -122,7 +134,6 @@ const ExpenseItem = () => {
             <Text style={styles.totalExpenses}>Total Expenses: ${totalExpenses}</Text>
 
             <ExpenseList userId={currentUser.uid} onExpenseAdded={updateExpenseList} expenseTracker={expenseTracker} />
-            {/* Display user-specific expense list */}
             
         </View>
     );

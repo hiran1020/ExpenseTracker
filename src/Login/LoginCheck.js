@@ -14,9 +14,7 @@ export default function LoginCheck() {
     const handleLogout = async () => {
         try {
           await Logout();
-          console.log('Logout successful'); // Add a log statement for debugging
         } catch (error) {
-          console.error('Logout error:', error.message);
           // Handle logout error
         }
       };
@@ -25,7 +23,6 @@ export default function LoginCheck() {
 
   // Initialize Firebase outside the component
   if (!firebase.apps.length) {
-    console.log("Initializing Firebase...");
     firebase.initializeApp(firebaseConfig);
   }
 

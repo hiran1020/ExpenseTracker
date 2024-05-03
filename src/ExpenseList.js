@@ -55,7 +55,7 @@ const ExpenseList = ({ userId }) => {
               renderItem={({ item }) => (
                 <View style={styles.itemList}>
                   <View style={styles.descView}>
-                    <Text style={styles.desc}>{item.description}</Text>
+                  <Text style={styles.desc}>{item.exptype}</Text>
                   </View>
                   <View style={styles.amtView}>
                     <Text style={styles.amt}>-{item.amount}</Text>

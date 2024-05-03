@@ -207,7 +207,53 @@ const styles = StyleSheet.create({
         color: '#dddddd', // Text color
         textAlign: 'center',
         fontSize: 16,
-        
+      },
+      dropdownButtonStyle: {
+        width: '100%',
+        height: 50,
+        backgroundColor: 'transparent',
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        borderColor:'black',
+        borderWidth:1,
+      },
+      dropdownButtonTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: 'white',
+      },
+      dropdownButtonArrowStyle: {
+        fontSize: 28,
+      },
+      dropdownButtonIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
+      },
+      dropdownMenuStyle: {
+        backgroundColor: 'transparent',
+        borderRadius: 8,
+      },
+      dropdownItemStyle: {
+        width: '100%',
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 8,
+      },
+      dropdownItemTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: 'white',
+      },
+      dropdownItemIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
       },
 }
 )

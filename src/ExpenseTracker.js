@@ -35,9 +35,7 @@ class ExpenseTracker {
 
     async addExpense(expense, userId) {
         await this.database.ref(`expenses/${userId}`).push(expense);
-        console.log("Expense added successfully");
-        this.saveExpenses(); // Save expenses after adding a new expense
-        console.log("------this-------",this); // Optionally log the updated tracker
+        this.saveExpenses(); // Save expenses after adding a new expense// Optionally log the updated tracker
     }
 
     async getExpenses(userId) {

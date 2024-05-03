@@ -11,10 +11,11 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const [password, setPassword] = useState('');
 
+  const validate = !email || !password
+
   const handleSignUp = async () => {
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-      console.log('User signed up:', userCredential.user);
       // Navigate to the next screen or perform other actions upon successful signup
     } catch (error) {
       console.error('Signup error:', error.message);
@@ -42,7 +43,7 @@ const SignUp = () => {
         secureTextEntry
         />
 
-        <TouchableOpacity style={[styles.button, !email || !password ? styles.disabledButton : null]} disabled={!email || !password} onPress={handleSignUp}>
+        <TouchableOpacity style={[styles.button, validate ? styles.disabledButton : null]} disabled={validate} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
     </View>

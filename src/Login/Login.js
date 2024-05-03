@@ -17,10 +17,8 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const userCredential = await auth().signInWithEmailAndPassword(email, password);
-      console.log('User logged in:', userCredential.user);
       // Navigate to the next screen or perform other actions upon successful login
     } catch (error) {
-      console.error('Login error:', error.message);
       setError(error.message);
     }
   };
@@ -81,7 +79,7 @@ const Login = () => {
           <View style={styles.modalContent}>
             <SignUp />
             <TouchableOpacity
-              style={[styles.button]}
+              style={styles.button}
               onPress={() => setIsSignUPModalVisible(false)}
             >
               <Text style={styles.buttonText}>Close</Text>
