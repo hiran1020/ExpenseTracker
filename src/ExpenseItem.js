@@ -7,14 +7,16 @@ import styles from './Styles';
 import DatePick from './DatePicker';
 import ExpenseList from './ExpenseList';
 import ExpenseTracker from './ExpenseTracker';
-import DropdownReason from './DropdownReason';
+import DropdownReason from  './DropdownReason';
+import SMSComponent from './Sms/NotificationListner';
+
 
 const ExpenseItem = () => {
     const currentUser = auth().currentUser;
     const [amount, setAmount] = useState('');
+    const [exptype, setExptype] = useState('');
     const [date, setDate] = useState(new Date());
     const [description, setDescription] = useState('');
-    const [exptype, setExptype] = useState('');
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker());
 
@@ -96,6 +98,38 @@ const ExpenseItem = () => {
       setExpenseTracker(new ExpenseTracker()); 
     }
 
+
+    const handleSMSData = (smsData) => {
+        smsData.forEach((data) => {
+            // Check if an expense item with the same date and ID already exists
+            const existingExpense = expenseTracker.getExpenseByDateAndId(data.date, data.id);
+            
+            if (!existingExpense) {
+                // If no existing expense found, add the new expense item
+                const newExpense = {
+                    id: data.id,
+                    description: data.description,
+                    amount: data.amount,
+                    exptype: data.exptype,
+                    date: data.date
+                };
+                
+                
+                console.log("Adding new expense:", newExpense);
+                
+                
+                // Add the expense to the expense tracker
+                expenseTracker.addExpense(newExpense, currentUser.uid);
+            } else {
+                // Log a message indicating that a duplicate expense item was found
+                console.log("Duplicate expense found. Skipping...");
+            }
+        });
+    
+        // Fetch updated expenses after adding new expenses
+        fetchExpenses();
+    };
+    
       
 
     return (
@@ -126,12 +160,12 @@ const ExpenseItem = () => {
                     setDate={setDate} 
                      />
 
-    
+                <SMSComponent onSMSData={handleSMSData} />
                 <TouchableOpacity  onPress={handleAddExpense}>
                     <Text style={styles.btnText}>Add Expense</Text>
                 </TouchableOpacity>
             </View>
-            <Text style={styles.totalExpenses}>Total Expenses: ${totalExpenses}</Text>
+            <Text style={styles.totalExpenses}>Total Expenses: ${totalExpenses.toFixed(2)}</Text>
 
             <ExpenseList userId={currentUser.uid} onExpenseAdded={updateExpenseList} expenseTracker={expenseTracker} />
             

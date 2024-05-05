@@ -19,6 +19,9 @@
     "react": "18.2.0",
     "react-native": "0.74.0",
     "react-native-date-picker": "^5.0.2",
+    "react-native-get-sms-android": "^2.1.0",
+    "react-native-permissions": "^4.1.5",
+    "react-native-push-notification": "^8.1.1",
     "react-native-select-dropdown": "^4.0.1",
     "react-native-vector-icons": "^10.1.0"
   },

@@ -51,6 +51,19 @@ class ExpenseTracker {
             return 0; // Return 0 if there are no expenses or if expense is undefined
         }
     }
+
+    getExpenseByDateAndId(date, id, userId) {
+        // Check if an expense with the given date and ID exists for the user
+        if (this.expense[userId] && this.expense[userId][id]) {
+            const expense = this.expense[userId][id];
+            // Check if the expense's date matches the given date
+            if (expense.date.getTime() === date.getTime()) {
+                return expense;
+            }
+        }
+        // Return undefined if no matching expense is found
+        return undefined;
+    }
 }
 
 export default ExpenseTracker;
