@@ -20,9 +20,11 @@ const SMSComponent = ({ onSMSData }) => {
             );
 
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("Permissions access")
                 // Permission granted, fetch SMS messages
                 const filter = {
-                    box: 'inbox', // Fetch messages from the inbox
+                    box: 'inbox', 
+                    // Fetch messages from the inbox
                 };
 
                 SmsAndroid.list(
@@ -34,17 +36,49 @@ const SMSComponent = ({ onSMSData }) => {
                         const messages = JSON.parse(smsList);
                         const filteredMessages = filterItems(messages);
                         const regex = /\d+(\.\d+)?/g;
+
+                        //TODO: Search deposited,credited,withdraws,debited
                         const smsData = filteredMessages.map((message) => {
                             const amounts = message.body.match(regex);
-                            const amount = amounts ? parseFloat(amounts[1]) : null;
-                            return {
-                                id: message._id,
-                                description: "Mobile Topup",
-                                amount: amount,
-                                exptype: "Mobile-Topup",
-                                date: new Date(message.date), // Use the date from the message
-                            };
+                            const amount = amounts ? parseFloat(amounts[0]) : null;
+                            const service = amounts ? parseFloat(amounts[1]) : null;
+
+                            if (message.body.toLowerCase().includes('service number')) {
+                                return {
+                                    id: message._id,
+                                    description: "Mobile Top-up to: " + amount,
+                                    amount: service,
+                                    exptype: "Mobile-Top-up",
+                                    date: new Date(message.date),
+                                };
+                            } else if (message.body.toLowerCase().includes('debited by')) {
+                                return {
+                                    id: message._id,
+                                    description: message.body,
+                                    amount: amount,
+                                    exptype: "Si-fi",
+                                    date: new Date(message.date),
+                                };
+                            } else if (message.body.toLowerCase().includes('withdraw')) {
+                                return {
+                                    id: message._id,
+                                    description: message.body,
+                                    amount: amount,
+                                    exptype: "others",
+                                    date: new Date(message.date),
+                                };
+                            } else if (message.body.toLowerCase().includes('payment')){
+                                // Handle any other cases here
+                                return {
+                                    id: message._id,
+                                    description: message.body,
+                                    amount: amount,
+                                    exptype: "Debt", // Or any other default value
+                                    date: new Date(message.date),
+                                };
+                            }
                         });
+                
 
                         
                         // Send the SMS data to the parent component
@@ -62,7 +96,7 @@ const SMSComponent = ({ onSMSData }) => {
     const filterItems = (messages) => {
         return messages.filter((message) => {
             const { body } = message;
-            return body.toLowerCase().includes('debited') || body.toLowerCase().includes('credited');
+            return body.toLowerCase().includes('debited') || body.toLowerCase().includes('credited') || body.toLowerCase.includes('deposited') || body.toLowerCase.includes('withdraw') || body.toLowerCase.includes('payment');
         });
     };
 

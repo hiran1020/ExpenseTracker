@@ -15,7 +15,8 @@ const DropdownReason = ({ onSelectItem })=>{
     {title: 'Medicine', icon: 'emoticon-excited-outline'},
     {title: 'Food', icon: 'emoticon-kiss-outline'},
     {title: 'Debt', icon: 'emoticon-angry-outline'},
-    {title: 'Mobile-Topup', icon: 'emoticon-wink-outline'},
+    {title: 'others', icon : 'emoticon-kiss-outline'},
+    {title: 'Mobile-Top-up', icon: 'emoticon-wink-outline'},
   ];
   return (
   <SelectDropdown

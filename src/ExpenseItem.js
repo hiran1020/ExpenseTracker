@@ -1,10 +1,11 @@
 import  auth  from '@react-native-firebase/auth';
 import React, { useState, useEffect } from 'react';
-import { Text, View, TextInput, TouchableOpacity, Keyboard, Alert } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Keyboard, Alert,Modal } from 'react-native';
 
 
 import styles from './Styles';
 import DatePick from './DatePicker';
+import ChartSms from './Sms/ChartSms';
 import ExpenseList from './ExpenseList';
 import ExpenseTracker from './ExpenseTracker';
 import DropdownReason from  './DropdownReason';
@@ -17,8 +18,17 @@ const ExpenseItem = () => {
     const [exptype, setExptype] = useState('');
     const [date, setDate] = useState(new Date());
     const [description, setDescription] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker());
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         if (currentUser) {
@@ -130,7 +140,11 @@ const ExpenseItem = () => {
         fetchExpenses();
     };
     
-      
+    const DateFilter = {
+        userId: currentUser.uid,
+        onExpenseAdded: updateExpenseList,
+        expenseTracker: expenseTracker
+    };
 
     return (
         <View>
@@ -164,10 +178,36 @@ const ExpenseItem = () => {
                 <TouchableOpacity  onPress={handleAddExpense}>
                     <Text style={styles.btnText}>Add Expense</Text>
                 </TouchableOpacity>
+                
             </View>
             <Text style={styles.totalExpenses}>Total Expenses: ${totalExpenses.toFixed(2)}</Text>
+            <View>
+                    <ChartSms {...DateFilter} />
+            </View>
+            <TouchableOpacity onPress={openModal}>
+                <Text style={styles.btnTextModel}>View Statements</Text>
+            </TouchableOpacity>
 
-            <ExpenseList userId={currentUser.uid} onExpenseAdded={updateExpenseList} expenseTracker={expenseTracker} />
+
+            <View>
+                <ExpenseList {...DateFilter} />
+            </View>
+
+            
+            <Modal  style={{backgroundColor:'black'}}visible={isModalOpen} onRequestClose={closeModal}>
+                <View style={{backgroundColor:'#2a2929',flex:1,justifyContent:'space-evenly'}}>
+
+                    <View>
+                        <ExpenseList {...DateFilter} />
+                    </View>
+                    <View style={styles.btn}> 
+                    <ChartSms {...DateFilter} />
+
+                    </View>
+                <TouchableOpacity onPress={closeModal}><Text style={styles.btnText}>Close</Text></TouchableOpacity>
+                </View>
+            </Modal>
+            
             
         </View>
     );

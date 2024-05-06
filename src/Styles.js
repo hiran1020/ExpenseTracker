@@ -76,6 +76,17 @@ const styles = StyleSheet.create({
         textAlign:'center',
         marginHorizontal:10,
     },
+    btnTextModel:{
+      color:'#DDDDDD',
+      fontSize:20,
+      fontWeight:'bold',
+      padding:10,
+      borderRadius:10,
+      borderColor:'black',
+      borderWidth:1,
+      textAlign:'center',
+      margin:10,
+  },
     expenseList:{
         borderColor:'black',
         borderWidth:1,
@@ -88,8 +99,13 @@ const styles = StyleSheet.create({
         alignItems:'center',
         textAlign:'center',
         fontWeight:'bold',
-        height:windowHeight * 0.55,
+        height:windowHeight * 0.56,
     },
+    loadingContainer:{
+      
+      alignItems:'center',
+      justifyContent:'center',
+  },
     itemList:{
         flexDirection:'row',
         justifyContent:'center',
@@ -102,8 +118,7 @@ const styles = StyleSheet.create({
         width:'100%',
     },
     desc:{
-        fontWeight:'bold',
-        color:'gray',
+        color:'#DDDDDD',
         fontSize:20,
         alignItems:'center',
         top:5
@@ -133,12 +148,19 @@ const styles = StyleSheet.create({
     dateGroup:{
         textAlign:'left',
         fontWeight:'bold',
-        color:'gray',
+        color:'#DDDDDD',
         fontSize:20,
         alignItems:'center',
         top:5,
         left:5,
     },
+    dateAmount:{
+      textAlign:'right',
+      fontWeight:'bold',
+      color:'#DDDDDD',
+      fontSize:20,
+      alignItems:'center',
+  },
     loading:{
         color:'white',
         marginTop:50,

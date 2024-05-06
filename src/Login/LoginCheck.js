@@ -1,5 +1,5 @@
 import auth from '@react-native-firebase/auth';
-import firebase from '@react-native-firebase/app'; // Import firebase here
+import firebase from '@react-native-firebase/app'; 
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -38,7 +38,8 @@ export default function LoginCheck() {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
+     // unsubscribe on unmount
   }, []);
 
   if (initializing) return null;
