@@ -6,8 +6,8 @@ import Login from './Login'
 const LoginScreen = () => {
   return (
     <View>
-    <Login />
-  </View>
+      <Login />
+    </View>
   )
 }
 

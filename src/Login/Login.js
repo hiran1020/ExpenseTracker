@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import auth from '@react-native-firebase/auth';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
 
+import SignUp from './Signup';
 import styles from '../Styles';
 
 const Login = () => {
@@ -10,15 +11,15 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [resetEmail, setResetEmail] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
-  const [isResetModalVisible, setIsResetModalVisible] = useState(false); // State for modal visibility
+  const [isResetModalVisible, setIsResetModalVisible] = useState(false); 
+  const [isSignUpModalVisible, setIsSignUpModalVisible] = useState(false);
+  const [isLoginVisible, setIsLoginVisible] = useState(true); // Track visibility of login section
 
   const handleLogin = async () => {
     try {
       const userCredential = await auth().signInWithEmailAndPassword(email, password);
-      console.log('User logged in:', userCredential.user);
       // Navigate to the next screen or perform other actions upon successful login
     } catch (error) {
-      console.error('Login error:', error.message);
       setError(error.message);
     }
   };
@@ -29,45 +30,91 @@ const Login = () => {
       setResetSuccess(true);
       setIsResetModalVisible(false); // Close the modal after successful reset
     } catch (error) {
-      console.error('Password reset error:', error.message);
       setError(error.message);
     }
   };
 
+  const toggleSignUpModal = () => {
+    setIsSignUpModalVisible(!isSignUpModalVisible);
+  };
+
+  const toggleLoginSection = () => {
+    setIsLoginVisible(!isLoginVisible);
+  };
+
+  const handleCreateAccount = () => {
+    setIsResetModalVisible(false);
+    setIsLoginVisible(false);
+    setIsSignUpModalVisible(true);
+  };
+
+  const handleResetPasswordClick = () => {
+    setIsSignUpModalVisible(false);
+    setIsLoginVisible(false);
+    setIsResetModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsResetModalVisible(false);
+    setIsSignUpModalVisible(false);
+    setIsLoginVisible(true);
+    setError(null);
+    setResetSuccess(false);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titleLogin}>Login</Text>
-      {error && <Text style={styles.error}>{error}</Text>}
-      <TextInput
-        style={styles.inputLogin}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.inputLogin}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={[styles.button, !email ? styles.disabledButton : null]} disabled={!email} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+      {isLoginVisible && (
+        <View style={styles.modalContent}>
+          <Text style={styles.titleLogin}>Login</Text>
+          {error && <Text style={styles.error}>{error}</Text>}
+          <TextInput
+            style={styles.inputLogin}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.inputLogin}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={[styles.button, !email ? styles.disabledButton : null]} disabled={!email} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleResetPasswordClick}>
+            <Text style={styles.buttonText}>Reset Password</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
+            <Text style={styles.buttonText}>Create Account</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-      <View>
-        <Text style={styles.buttonText} >Don't have an account? Create One </Text>
-      </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isSignUpModalVisible}
+        onRequestClose={() => setIsSignUpModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <SignUp />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleModalClose}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+            {/* Add any additional content or buttons if needed */}
+          </View>
+        </View>
+      </Modal>
 
-      <View style={{ marginTop: 10 }}>
-        <TouchableOpacity style={styles.button} onPress={() => setIsResetModalVisible(true)}>
-          <Text style={styles.buttonText}>Reset Password</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Reset Password Modal */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -94,7 +141,7 @@ const Login = () => {
             )}
             <TouchableOpacity
               style={[styles.button]}
-              onPress={() => setIsResetModalVisible(false)}
+              onPress={handleModalClose}
             >
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
