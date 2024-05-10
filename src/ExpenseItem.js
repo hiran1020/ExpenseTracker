@@ -168,6 +168,7 @@ const ExpenseItem = () => {
                     onSelectItem ={handleExpType}
                     
                    />
+                   
                 <DatePick 
                 onSelectDate={handleSelectDate} 
                     date={date} 

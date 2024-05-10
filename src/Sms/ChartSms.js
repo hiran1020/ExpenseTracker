@@ -1,48 +1,38 @@
-import '@react-native-firebase/database';
-import firebase from '@react-native-firebase/app';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-chart-kit';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 
 import styles from '../Styles';
 
-const ChartSms = ({ userId }) => {
+const ChartSms = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expenseData, setExpenseData] = useState({});
 
   useEffect(() => {
-    const expenseRef = firebase.database().ref(`expenses/${userId}`);
-    
-    const handleData = (snapshot) => {
-      try {
-        const expenses = snapshot.val();
-        if (expenses) {
-          const expenseArray = Object.values(expenses);
-          const groupedExpenses = groupExpensesByDate(expenseArray.reverse());
-          setExpenseData(groupedExpenses);
-        } else {
-          setExpenseData({});
-        }
-        setLoading(false);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-        setError('Error fetching data');
+    loadExpenses();
+  }, []);
+
+  const loadExpenses = async () => {
+    try {
+      const savedExpenses = await AsyncStorage.getItem('expenses');
+      if (savedExpenses !== null) {
+        const expenses = JSON.parse(savedExpenses);
+        const groupedExpenses = groupExpensesByDate(expenses);
+        setExpenseData(groupedExpenses);
+      } else {
+        setExpenseData({});
       }
-    };
+      setLoading(false);
+      setError(null);
+    } catch (error) {
+      console.error('Error loading expenses:', error);
+      setLoading(false);
+      setError('Error loading expenses');
+    }
+  };
 
-    // Attach listener for real-time updates
-    expenseRef.on('value', handleData);
-
-    // Detach the listener when component unmounts
-    return () => expenseRef.off('value', handleData);
-  }, [userId]);
-
-
-  //show chart of same week only if there is any expense
-  
   const groupExpensesByDate = (expenses) => {
     const currentDate = new Date();
     const startOfWeek = new Date(currentDate);
@@ -50,13 +40,13 @@ const ChartSms = ({ userId }) => {
     // Start of the current week (Monday)
   
     const groupedExpenses = {
-      Monday: { expenses: [], totalAmount: 0 },
-      Tuesday: { expenses: [], totalAmount: 0 },
-      Wednesday: { expenses: [], totalAmount: 0 },
-      Thursday: { expenses: [], totalAmount: 0 },
-      Friday: { expenses: [], totalAmount: 0 },
-      Saturday: { expenses: [], totalAmount: 0 },
-      Sunday: { expenses: [], totalAmount: 0 },
+      Monday: { totalAmount: 0 },
+      Tuesday: { totalAmount: 0 },
+      Wednesday: { totalAmount: 0 },
+      Thursday: { totalAmount: 0 },
+      Friday: { totalAmount: 0 },
+      Saturday: { totalAmount: 0 },
+      Sunday: { totalAmount: 0 },
     };
   
     expenses.forEach((expense) => {
@@ -64,15 +54,14 @@ const ChartSms = ({ userId }) => {
       // Check if the expense date is within the current week
       if (date >= startOfWeek && date < currentDate) {
         const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
-        // Add the expense to the corresponding day of the week
-        groupedExpenses[dayOfWeek].expenses.push(expense);
+        // Add the expense amount to the corresponding day of the week
         groupedExpenses[dayOfWeek].totalAmount += expense.amount;
       }
     });
   
     return groupedExpenses;
   };
-  
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
