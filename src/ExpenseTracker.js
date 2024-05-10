@@ -52,11 +52,12 @@ class ExpenseTracker {
     getExpenseByDateAndId(date, id) {
         // Check if an expense with the given date and ID exists
         const expense = this.expense.find(expense => {
-            return expense.id === id && expense.date.getTime() === date.getTime();
+            return expense.id === id && new Date(expense.date).getTime() === new Date(date).getTime();
         });
         // Return the matching expense or undefined if not found
         return expense;
     }
+
 
     sortByDate() {
         this.expense.sort((a, b) => new Date(b.date) - new Date(a.date));

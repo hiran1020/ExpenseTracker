@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     },
     date:{
         textAlign:'right',
+        color:'#DDDDDD'
     },
     dateGroup:{
         textAlign:'left',

@@ -16,7 +16,7 @@ const ExpenseList = () => {
       const savedExpenses = await AsyncStorage.getItem('expenses');
       if (savedExpenses !== null) {
         const expenses = JSON.parse(savedExpenses);
-        const groupedExpenses = groupExpensesByDate(expenses.reverse());
+        const groupedExpenses = groupExpensesByDate(expenses);
         setExpenseData(groupedExpenses);
       }
     } catch (error) {
@@ -43,7 +43,7 @@ const ExpenseList = () => {
   return (
     <View style={styles.expenseList}>
       <FlatList
-        data={Object.keys(expenseData).reverse()}
+        data={Object.keys(expenseData).sort((a, b) => new Date(b) - new Date(a))}
         keyExtractor={(item) => item} 
         renderItem={({ item }) => (
           <View>
@@ -60,7 +60,7 @@ const ExpenseList = () => {
                   <View style={styles.amtView}>
                     <Text style={styles.amt}>-{item.amount}</Text>
                     <Text style={styles.date}>
-                      {new Date(item.date).toLocaleDateString()}
+                      {new Date(item.date).toLocaleTimeString()}
                     </Text>
                   </View>
                 </View>

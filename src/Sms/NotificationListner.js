@@ -96,9 +96,14 @@ const SMSComponent = ({ onSMSData }) => {
     const filterItems = (messages) => {
         return messages.filter((message) => {
             const { body } = message;
-            return body.toLowerCase().includes('debited') || body.toLowerCase().includes('credited') || body.toLowerCase.includes('deposited') || body.toLowerCase.includes('withdraw') || body.toLowerCase.includes('payment');
+            return body.toLowerCase().includes('debited') || 
+                   body.toLowerCase().includes('credited') || 
+                   body.toLowerCase().includes('deposited') || 
+                   body.toLowerCase().includes('withdraw') || 
+                   body.toLowerCase().includes('payment');
         });
     };
+    
 
     return null; // Or render your component UI here
 };
