@@ -1,5 +1,3 @@
-import '@react-native-firebase/database';
-import firebase from '@react-native-firebase/app';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -8,7 +6,6 @@ class ExpenseTracker {
         this.expense = [];
         //initializing array as empty
         this.loadExpenses(); 
-        this.database = firebase.database();
         // Load expenses when creating a new instance
     }
 
@@ -33,37 +30,46 @@ class ExpenseTracker {
         }
     }
 
-    async addExpense(expense, userId) {
-        await this.database.ref(`expenses/${userId}`).push(expense);
-        this.saveExpenses(); // Save expenses after adding a new expense// Optionally log the updated tracker
+    async addExpense(expense) {
+        this.expense.push(expense);
+        await this.saveExpenses(); 
+        // Save expenses after adding a new expense
     }
 
-    async getExpenses(userId) {
-        // Fetch expenses for the given userId from the database
-        const snapshot = await this.database.ref(`expenses/${userId}`).once('value');
-        return snapshot.val();
+    async getExpenses() {
+        return this.expense;
     }
 
     getTotalExpense(){
         if (this.expense && this.expense.length > 0) {
             return this.expense.reduce((acc, curr) => acc + curr.amount, 0);
         } else {
-            return 0; // Return 0 if there are no expenses or if expense is undefined
+            return 0; 
+            // Return 0 if there are no expenses or if expense is undefined
         }
     }
 
-    getExpenseByDateAndId(date, id, userId) {
-        // Check if an expense with the given date and ID exists for the user
-        if (this.expense[userId] && this.expense[userId][id]) {
-            const expense = this.expense[userId][id];
-            // Check if the expense's date matches the given date
-            if (expense.date.getTime() === date.getTime()) {
-                return expense;
-            }
-        }
-        // Return undefined if no matching expense is found
-        return undefined;
+    getExpenseByDateAndId(date, id) {
+        // Check if an expense with the given date and ID exists
+        const expense = this.expense.find(expense => {
+            return expense.id === id && expense.date.getTime() === date.getTime();
+        });
+        // Return the matching expense or undefined if not found
+        return expense;
+    }
+
+    sortByDate() {
+        this.expense.sort((a, b) => new Date(b.date) - new Date(a.date));
+        //shorting by date
+    }
+
+    filterByDateRange(startDate, endDate) {
+        return this.expense.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate >= startDate && expenseDate <= endDate;
+        });
     }
 }
+
 
 export default ExpenseTracker;
