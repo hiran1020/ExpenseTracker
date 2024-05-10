@@ -147,7 +147,7 @@ const ExpenseItem = () => {
     };
 
     return (
-        <View>
+        <View style={{backgroundColor:'#2a2929'}}>
             <Text style={styles.title}>Expense Tracker</Text>
          
             <View style={styles.form}>
@@ -168,7 +168,7 @@ const ExpenseItem = () => {
                     onSelectItem ={handleExpType}
                     
                    />
-                   
+
                 <DatePick 
                 onSelectDate={handleSelectDate} 
                     date={date} 

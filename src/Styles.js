@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'dark',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -223,8 +223,7 @@ const styles = StyleSheet.create({
         margin:11,
         backgroundColor:"gray",
         borderColor: 'black',
-        borderRadius: 10, // Border radius for visibility
-         // Border color for visibility
+        borderRadius: 10,
       },
       buttonText: {
         color: '#dddddd', // Text color

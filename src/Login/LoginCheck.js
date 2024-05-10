@@ -54,13 +54,13 @@ export default function LoginCheck() {
 
   return (
     <View>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 30 }}>
-        <Text style={{ fontSize: 16 }}>Welcome {user.email.split("@")[0]}</Text>
+      <View style={{flexDirection: "row", justifyContent: "space-between", backgroundColor:'#2a2929',alignItems: "center", height: 30 }}>
+        <Text style={{ fontSize: 16,color:'#ffff' }}>Welcome {user.email.split("@")[0]}</Text>
         <TouchableOpacity onPress={handleLogout}>
-          <Text style={{ fontSize: 16 }}>Logout</Text>
+          <Text style={{ fontSize: 16, color:'#ffff' }}>Logout</Text>
         </TouchableOpacity>
       </View>
-      <ExpenseItem />
+      <ExpenseItem  />
     </View>
   );
 }  
