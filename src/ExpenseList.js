@@ -8,43 +8,47 @@ const ExpenseList = () => {
   const [expenseData, setExpenseData] = useState([]);
 
   useEffect(() => {
+    const loadExpenses = async () => {
+      try {
+        const savedExpenses = await AsyncStorage.getItem('expenses');
+        if (savedExpenses !== null) {
+          const expenses = JSON.parse(savedExpenses);
+          const groupedExpenses = groupExpensesByDate(expenses);
+          setExpenseData(groupedExpenses);
+        }
+      } catch (error) {
+        console.error('Error loading expenses:', error);
+      }
+    };
     loadExpenses();
   }, []);
 
-  const loadExpenses = async () => {
-    try {
-      const savedExpenses = await AsyncStorage.getItem('expenses');
-      if (savedExpenses !== null) {
-        const expenses = JSON.parse(savedExpenses);
-        const groupedExpenses = groupExpensesByDate(expenses);
-        setExpenseData(groupedExpenses);
-      }
-    } catch (error) {
-      console.error('Error loading expenses:', error);
-    }
-  };
 
   const groupExpensesByDate = (expenses) => {
     const groupedExpenses = {};
     expenses.forEach((expense) => {
       const date = new Date(expense.date).toLocaleDateString();
-      if (!groupedExpenses[date]) {
-        groupedExpenses[date] = {
-          expenses: [],
-          totalAmount: 0,
-        };
+      if (expense.amount >= 1) {
+        if (!groupedExpenses[date]) {
+          groupedExpenses[date] = {
+            expenses: [],
+            totalAmount: 0,
+          };
+        }
+        groupedExpenses[date].expenses.push(expense);
+        groupedExpenses[date].totalAmount += expense.amount;
       }
-      groupedExpenses[date].expenses.push(expense);
-      groupedExpenses[date].totalAmount += expense.amount;
     });
     return groupedExpenses;
   };
+  
 
   return (
     <View style={styles.expenseList}>
       <FlatList
         data={Object.keys(expenseData).sort((a, b) => new Date(b) - new Date(a))}
         keyExtractor={(item) => item} 
+        ListEmptyComponent={<Text style={styles.btnText}>No Expenses Yet !!!</Text>}
         renderItem={({ item }) => (
           <View>
             <Text style={styles.dateGroup}>{item}</Text>

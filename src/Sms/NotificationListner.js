@@ -42,42 +42,46 @@ const SMSComponent = ({ onSMSData }) => {
                             const amounts = message.body.match(regex);
                             const amount = amounts ? parseFloat(amounts[0]) : null;
                             const service = amounts ? parseFloat(amounts[1]) : null;
-
+                        
                             if (message.body.toLowerCase().includes('service number')) {
+                                // Handle mobile top-up
                                 return {
                                     id: message._id,
                                     description: "Mobile Top-up to: " + amount,
-                                    amount: service,
+                                    amount: service || 0,
                                     exptype: "Mobile-Top-up",
                                     date: new Date(message.date),
                                 };
                             } else if (message.body.toLowerCase().includes('debited by')) {
+                                // Handle debited transaction
                                 return {
                                     id: message._id,
                                     description: message.body,
-                                    amount: amount,
+                                    amount: amount || 0,
                                     exptype: "Si-fi",
                                     date: new Date(message.date),
                                 };
                             } else if (message.body.toLowerCase().includes('withdraw')) {
+                                // Handle withdrawal
                                 return {
                                     id: message._id,
                                     description: message.body,
-                                    amount: amount,
+                                    amount: amount || 0,
                                     exptype: "others",
                                     date: new Date(message.date),
                                 };
                             } else if (message.body.toLowerCase().includes('payment')){
-                                // Handle any other cases here
+                                // Handle payment
                                 return {
                                     id: message._id,
                                     description: message.body,
-                                    amount: amount,
-                                    exptype: "Debt", // Or any other default value
+                                    amount: amount || 0,
+                                    exptype: "Debt",
                                     date: new Date(message.date),
                                 };
                             }
                         });
+                        
                 
 
                         
