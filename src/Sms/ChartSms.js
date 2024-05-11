@@ -11,7 +11,11 @@ const ChartSms = () => {
   const [expenseData, setExpenseData] = useState({});
 
   useEffect(() => {
-    loadExpenses();
+    const timer = setInterval(() => {
+      loadExpenses();
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const loadExpenses = async () => {
@@ -21,11 +25,11 @@ const ChartSms = () => {
         const expenses = JSON.parse(savedExpenses);
         const groupedExpenses = groupExpensesByDate(expenses);
         setExpenseData(groupedExpenses);
+        setError(null); // Clear any previous errors
       } else {
         setExpenseData({});
       }
       setLoading(false);
-      setError(null);
     } catch (error) {
       console.error('Error loading expenses:', error);
       setLoading(false);
@@ -37,24 +41,21 @@ const ChartSms = () => {
     const currentDate = new Date();
     const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); 
-    // Start of the current week (Monday)
-  
+
     const groupedExpenses = {
-      Monday: { totalAmount: 0 },
-      Tuesday: { totalAmount: 0 },
-      Wednesday: { totalAmount: 0 },
-      Thursday: { totalAmount: 0 },
-      Friday: { totalAmount: 0 },
-      Saturday: { totalAmount: 0 },
-      Sunday: { totalAmount: 0 },
+      Mon: { totalAmount: 0 },
+      Tue: { totalAmount: 0 },
+      Wed: { totalAmount: 0 },
+      Thu: { totalAmount: 0 },
+      Fri: { totalAmount: 0 },
+      Sat: { totalAmount: 0 },
+      Sun: { totalAmount: 0 },
     };
   
     expenses.forEach((expense) => {
       const date = new Date(expense.date);
-      // Check if the expense date is within the current week
       if (date >= startOfWeek && date < currentDate) {
-        const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
-        // Add the expense amount to the corresponding day of the week
+        const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
         groupedExpenses[dayOfWeek].totalAmount += expense.amount;
       }
     });
@@ -62,49 +63,45 @@ const ChartSms = () => {
     return groupedExpenses;
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-  }
-
   return (
     <View>
-      {Object.keys(expenseData).length > 0 ? (
-        <LineChart
-          data={{
-            labels: Object.keys(expenseData),
-            datasets: [{
-              data: Object.values(expenseData).map(data => data.totalAmount),
-            }]
-          }}
-          width={500}
-          height={256}
-          verticalLabelRotation={1}
-          chartConfig={{
-            backgroundGradientFrom: "#1E2923",
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "#08130D",
-            backgroundGradientToOpacity: 0.5,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            strokeWidth: 2,
-            barPercentage: 0.5,
-            useShadowColorFromDataset: false,
-          }}
-          bezier
-        />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
       ) : (
-        <Text>No data available</Text>
+        <View>
+          {Object.keys(expenseData).length > 0 ? (
+            <LineChart
+              data={{
+                labels: Object.keys(expenseData),
+                datasets: [{
+                  data: Object.values(expenseData).map(data => data.totalAmount),
+                }]
+              }}
+              width={500}
+              height={256}
+              verticalLabelRotation={1}
+              chartConfig={{
+                backgroundGradientFrom: "#1E2923",
+                backgroundGradientFromOpacity: 0,
+                backgroundGradientTo: "#08130D",
+                backgroundGradientToOpacity: 0.5,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                strokeWidth: 2,
+                barPercentage: 0.5,
+                useShadowColorFromDataset: false,
+              }}
+              bezier
+            />
+          ) : (
+            <Text>No data available</Text>
+          )}
+        </View>
       )}
     </View>
   );

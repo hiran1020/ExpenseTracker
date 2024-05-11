@@ -17,10 +17,13 @@ const ExpenseItem = () => {
     const [amount, setAmount] = useState('');
     const [exptype, setExptype] = useState('');
     const [date, setDate] = useState(new Date());
+    const [chartData,setChartData]=useState([]);
     const [description, setDescription] = useState('');
+    const [expenseData, setExpenseData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [expenseTracker, setExpenseTracker] = useState(new ExpenseTracker());
+
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -35,6 +38,16 @@ const ExpenseItem = () => {
             fetchExpenses();
         }
     }, [currentUser]);
+    
+    const updateChartData = async () => {
+        try {
+            const expenses = await expenseTracker.getExpenses(currentUser.uid);
+            setChartData(updateExpenseList(expenses));
+        } catch (error) {
+            console.error('Error updating chart data:', error);
+        }
+    };
+    
 
     const fetchExpenses = async () => {
         try {
@@ -58,33 +71,43 @@ const ExpenseItem = () => {
 
 
     const handleAddExpense = async () => {
-      const newExpense = {
-          id :  Math.floor(Math.random() * 100000000),
-          description: description,
-          amount: parseFloat(amount),
-          exptype: exptype,
-          date: date.getTime()
-      };
-      if (currentUser) {
-
-          if (amount === '') {
-              handleAlert();
-          } else {
-          // Add expense for the logged-in user
-          await expenseTracker.addExpense(newExpense, currentUser.uid);
-          // Fetch updated expenses after adding a new expense
-          fetchExpenses();
-          }
-      }
-      setAmount('');
-      setDescription('');
-      setExptype('');
-      setDate(new Date());
-      Keyboard.dismiss();
-  };
-  
+        const defaultExpenseType = 'Payment'; 
+        const newExpense = {
+            id: Math.floor(Math.random() * 100000000),
+            description: description,
+            amount: parseFloat(amount),
+            exptype: exptype || defaultExpenseType,
+            date: date.getTime()
+        };
+    
+        if (currentUser) {
+            if (amount === '') {
+                handleAlert();
+            } else {
+                try {
+                    // Add expense for the logged-in user
+                    await expenseTracker.addExpense(newExpense, currentUser.uid);
+                    // Fetch updated expenses after adding a new expense
+                    fetchExpenses();
+                    updateChartData();
+                } catch (error) {
+                    console.error('Error adding expense:', error);
+                }
+            }
+        }
+    
+        // Clear input fields and dismiss keyboard
+        setAmount('');
+        setDescription('');
+        setExptype('');
+        setDate(new Date());
+        Keyboard.dismiss();
+    };    
+    
+    
     const formatDate = (date) => {
-      return date.toLocaleDateString(); // Use toLocaleDateString to format the date
+      return date.toLocaleDateString(); 
+      // Use toLocaleDateString to format the date
     };
   
     const handleSelectDate = (selectedDate) => {
@@ -110,35 +133,38 @@ const ExpenseItem = () => {
 
 
     const handleSMSData = (smsData) => {
-        smsData.forEach((data) => {
-            // Check if an expense item with the same date and ID already exists
-            const existingExpense = expenseTracker.getExpenseByDateAndId(data.date, data.id);
-            
-            if (!existingExpense) {
-                // If no existing expense found, add the new expense item
-                const newExpense = {
-                    id: data.id,
-                    description: data.description,
-                    amount: data.amount,
-                    exptype: data.exptype,
-                    date: data.date
-                };
+        if (smsData) {
+            smsData.forEach((data) => {
+                // Check if an expense item with the same date and ID already exists
+                const existingExpense = expenseTracker.getExpenseByDateAndId(data.date, data.id);
                 
-                
-                console.log("Adding new expense:", newExpense);
-                
-                
-                // Add the expense to the expense tracker
-                expenseTracker.addExpense(newExpense, currentUser.uid);
-            } else {
-                // Log a message indicating that a duplicate expense item was found
-                console.log("Duplicate expense found. Skipping...");
-            }
-        });
-    
-        // Fetch updated expenses after adding new expenses
-        fetchExpenses();
+                if (!existingExpense) {
+                    // If no existing expense found, add the new expense item
+                    const newExpense = {
+                        id: data.id,
+                        description: data.description,
+                        amount: data.amount,
+                        exptype: data.exptype,
+                        date: data.date
+                    };
+                    
+                    console.log("Adding new expense:", newExpense);
+                    
+                    // Add the expense to the expense tracker
+                    expenseTracker.addExpense(newExpense, currentUser.uid);
+                } else {
+                    // Log a message indicating that a duplicate expense item was found
+                    console.log("Duplicate expense found. Skipping...");
+                }
+            });
+        
+            // Fetch updated expenses after adding new expenses
+            fetchExpenses();
+        } else {
+            console.log("No SMS data received.");
+        }
     };
+    
     
     const DateFilter = {
         userId: currentUser.uid,
@@ -189,18 +215,16 @@ const ExpenseItem = () => {
                 <Text style={styles.btnTextModel}>View Statements</Text>
             </TouchableOpacity>
 
-
-            <View>
-                <ExpenseList {...DateFilter} />
-            </View>
-
-            
-            <Modal  style={{backgroundColor:'black'}}visible={isModalOpen} onRequestClose={closeModal}>
+            <Modal  
+            style={{backgroundColor:'black'}}
+            visible={isModalOpen} 
+            onRequestClose={closeModal} >
                 <View style={{backgroundColor:'#2a2929',flex:1,justifyContent:'space-evenly'}}>
 
                     <View>
                         <ExpenseList {...DateFilter} />
                     </View>
+
                     <View style={styles.btn}> 
                     <ChartSms {...DateFilter} />
 
@@ -208,10 +232,15 @@ const ExpenseItem = () => {
                 <TouchableOpacity onPress={closeModal}><Text style={styles.btnText}>Close</Text></TouchableOpacity>
                 </View>
             </Modal>
+
+{/* show last expense track */}
+            <View>
+  <ExpenseList {...DateFilter} />
+</View>
             
             
         </View>
     );
 };
-
+ 
 export default ExpenseItem;

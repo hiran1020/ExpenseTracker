@@ -46,33 +46,28 @@ const ExpenseList = () => {
   return (
     <View style={styles.expenseList}>
       <FlatList
-        data={Object.keys(expenseData).sort((a, b) => new Date(b) - new Date(a))}
-        keyExtractor={(item) => item} 
-        ListEmptyComponent={<Text style={styles.btnText}>No Expenses Yet !!!</Text>}
-        renderItem={({ item }) => (
-          <View>
-            <Text style={styles.dateGroup}>{item}</Text>
-            <Text style={styles.dateAmount}>Total: {expenseData[item].totalAmount}</Text>
-            <FlatList
-              data={expenseData[item].expenses}
-              keyExtractor={(expense, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.itemList}>
-                  <View style={styles.descView}>
-                    <Text style={styles.desc}>{item.exptype}</Text>
-                  </View>
-                  <View style={styles.amtView}>
-                    <Text style={styles.amt}>-{item.amount}</Text>
-                    <Text style={styles.date}>
-                      {new Date(item.date).toLocaleTimeString()}
-                    </Text>
-                  </View>
-                </View>
-              )}
-            />
+  data={Object.keys(expenseData).sort((a, b) => new Date(b) - new Date(a))}
+  keyExtractor={(item) => item}
+  ListEmptyComponent={<Text style={styles.btnText}>No Expenses Yet !!!</Text>}
+  renderItem={({ item }) => (
+    <>
+      <Text style={styles.dateGroup}>{item}</Text>
+      <Text style={styles.dateAmount}>Total: {expenseData[item].totalAmount}</Text>
+      {expenseData[item].expenses.map((expense, index) => (
+        <View style={styles.itemList} key={index}>
+          <View style={styles.descView}>
+            <Text style={styles.desc}>{expense.exptype}</Text>
           </View>
-        )}
-      />
+          <View style={styles.amtView}>
+            <Text style={styles.amt}>-{expense.amount}</Text>
+            <Text style={styles.date}>{new Date(expense.date).toLocaleTimeString()}</Text>
+          </View>
+        </View>
+      ))}
+    </>
+  )}
+/>
+
     </View>
   );
 };
