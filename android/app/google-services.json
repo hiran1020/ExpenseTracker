@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "968582321960",
-    "project_id": "expensebuddy-c7823",
-    "storage_bucket": "expensebuddy-c7823.appspot.com"
+    "project_number": "215973991758",
+    "project_id": "expensetracker-108a5",
+    "storage_bucket": "expensetracker-108a5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:968582321960:android:58257fd2e9bff07b02a21d",
+        "mobilesdk_app_id": "1:215973991758:android:4908dce80c0353e87ffa1f",
         "android_client_info": {
           "package_name": "com.expensetracker"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "968582321960-s785ht2hlhehqmdifk5ifp5dv35dja3k.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBZERQyynh_R4zF2aHt15PU5HMzmkxjSWc"
+          "current_key": "AIzaSyDWf1LtRqOA5-vVTqpeta9dcDh5R6dJ5LQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "968582321960-s785ht2hlhehqmdifk5ifp5dv35dja3k.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

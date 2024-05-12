@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 class ExpenseTracker {
     constructor() {
         this.expense = [];
@@ -29,13 +30,13 @@ class ExpenseTracker {
         }
     }
 
-    addExpense(expense) {
+    async addExpense(expense) {
         this.expense.push(expense);
-        this.saveExpenses(); // Save expenses after adding a new expense
-        console.log("------this-------",this); // Optionally log the updated tracker
+        await this.saveExpenses(); 
+        // Save expenses after adding a new expense
     }
 
-    getExpense() {
+    async getExpenses() {
         return this.expense;
     }
 
@@ -43,9 +44,33 @@ class ExpenseTracker {
         if (this.expense && this.expense.length > 0) {
             return this.expense.reduce((acc, curr) => acc + curr.amount, 0);
         } else {
-            return 0; // Return 0 if there are no expenses or if expense is undefined
+            return 0; 
+            // Return 0 if there are no expenses or if expense is undefined
         }
     }
+
+    getExpenseByDateAndId(date, id) {
+        // Check if an expense with the given date and ID exists
+        const expense = this.expense.find(expense => {
+            return expense.id === id && new Date(expense.date).getTime() === new Date(date).getTime();
+        });
+        // Return the matching expense or undefined if not found
+        return expense;
+    }
+
+
+    sortByDate() {
+        this.expense.sort((a, b) => new Date(b.date) - new Date(a.date));
+        //shorting by date
+    }
+
+    filterByDateRange(startDate, endDate) {
+        return this.expense.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate >= startDate && expenseDate <= endDate;
+        });
+    }
 }
+
 
 export default ExpenseTracker;

@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'dark',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -76,6 +76,17 @@ const styles = StyleSheet.create({
         textAlign:'center',
         marginHorizontal:10,
     },
+    btnTextModel:{
+      color:'#DDDDDD',
+      fontSize:20,
+      fontWeight:'bold',
+      padding:10,
+      borderRadius:10,
+      borderColor:'black',
+      borderWidth:1,
+      textAlign:'center',
+      margin:10,
+  },
     expenseList:{
         borderColor:'black',
         borderWidth:1,
@@ -88,8 +99,13 @@ const styles = StyleSheet.create({
         alignItems:'center',
         textAlign:'center',
         fontWeight:'bold',
-        height:windowHeight * 0.55,
+        height:windowHeight * 0.56,
     },
+    loadingContainer:{
+      
+      alignItems:'center',
+      justifyContent:'center',
+  },
     itemList:{
         flexDirection:'row',
         justifyContent:'center',
@@ -102,8 +118,7 @@ const styles = StyleSheet.create({
         width:'100%',
     },
     desc:{
-        fontWeight:'bold',
-        color:'gray',
+        color:'#DDDDDD',
         fontSize:20,
         alignItems:'center',
         top:5
@@ -129,16 +144,24 @@ const styles = StyleSheet.create({
     },
     date:{
         textAlign:'right',
+        color:'#DDDDDD'
     },
     dateGroup:{
         textAlign:'left',
         fontWeight:'bold',
-        color:'gray',
+        color:'#DDDDDD',
         fontSize:20,
         alignItems:'center',
         top:5,
         left:5,
     },
+    dateAmount:{
+      textAlign:'right',
+      fontWeight:'bold',
+      color:'#DDDDDD',
+      fontSize:20,
+      alignItems:'center',
+  },
     loading:{
         color:'white',
         marginTop:50,
@@ -159,14 +182,14 @@ const styles = StyleSheet.create({
       input: {
         width: '100%',
         height: 40,
-        borderColor: 'gray',
+        borderColor:'black',
         borderWidth: 1,
         borderRadius: 5,
         marginBottom: 10,
         paddingHorizontal: 10,
       },
       modalContainer: {
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         backgroundColor:'transparent',
         flex: 1,
       },
@@ -200,14 +223,59 @@ const styles = StyleSheet.create({
         margin:11,
         backgroundColor:"gray",
         borderColor: 'black',
-        borderRadius: 10, // Border radius for visibility
-         // Border color for visibility
+        borderRadius: 10,
       },
       buttonText: {
         color: '#dddddd', // Text color
         textAlign: 'center',
         fontSize: 16,
-        
+      },
+      dropdownButtonStyle: {
+        width: '100%',
+        height: 50,
+        backgroundColor: 'transparent',
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        borderColor:'black',
+        borderWidth:1,
+      },
+      dropdownButtonTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: 'white',
+      },
+      dropdownButtonArrowStyle: {
+        fontSize: 28,
+      },
+      dropdownButtonIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
+      },
+      dropdownMenuStyle: {
+        backgroundColor: 'transparent',
+        borderRadius: 8,
+      },
+      dropdownItemStyle: {
+        width: '100%',
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 8,
+      },
+      dropdownItemTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: 'white',
+      },
+      dropdownItemIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
       },
 }
 )

@@ -1,5 +1,5 @@
 import auth from '@react-native-firebase/auth';
-import firebase from '@react-native-firebase/app'; // Import firebase here
+import firebase from '@react-native-firebase/app'; 
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -14,9 +14,7 @@ export default function LoginCheck() {
     const handleLogout = async () => {
         try {
           await Logout();
-          console.log('Logout successful'); // Add a log statement for debugging
         } catch (error) {
-          console.error('Logout error:', error.message);
           // Handle logout error
         }
       };
@@ -25,7 +23,6 @@ export default function LoginCheck() {
 
   // Initialize Firebase outside the component
   if (!firebase.apps.length) {
-    console.log("Initializing Firebase...");
     firebase.initializeApp(firebaseConfig);
   }
 
@@ -41,7 +38,8 @@ export default function LoginCheck() {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
+     // unsubscribe on unmount
   }, []);
 
   if (initializing) return null;
@@ -51,17 +49,18 @@ export default function LoginCheck() {
        <LoginScreen />
       );
   }
+ 
+
 
   return (
     <View>
-        <View style={{flexDirection:"row", justifyContent:"space-between", height:20}}>
-
-      <Text>Welcome {user.email}</Text>
-      <TouchableOpacity onPress={handleLogout}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
-        </View>
-      <ExpenseItem />
+      <View style={{flexDirection: "row", justifyContent: "space-between", backgroundColor:'#2a2929',alignItems: "center", height: 30 }}>
+        <Text style={{ fontSize: 16,color:'#ffff' }}>Welcome {user.email.split("@")[0]}</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={{ fontSize: 16, color:'#ffff' }}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+      <ExpenseItem  />
     </View>
   );
-}
+}  
