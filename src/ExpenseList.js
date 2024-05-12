@@ -20,7 +20,12 @@ const ExpenseList = () => {
         console.error('Error loading expenses:', error);
       }
     };
-    loadExpenses();
+    const intervalId = setInterval(() => {
+      loadExpenses();
+    }, 1000);
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
 

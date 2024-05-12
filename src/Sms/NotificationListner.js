@@ -20,8 +20,6 @@ const SMSComponent = ({ onSMSData }) => {
             );
 
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log("Permissions access")
-                // Permission granted, fetch SMS messages
                 const filter = {
                     box: 'inbox', 
                     // Fetch messages from the inbox
@@ -52,35 +50,36 @@ const SMSComponent = ({ onSMSData }) => {
                                     exptype: "Mobile-Top-up",
                                     date: new Date(message.date),
                                 };
-                            } else if (message.body.toLowerCase().includes('debited by')) {
-                                // Handle debited transaction
-                                return {
-                                    id: message._id,
-                                    description: message.body,
-                                    amount: amount || 0,
-                                    exptype: "Si-fi",
-                                    date: new Date(message.date),
-                                };
-                            } else if (message.body.toLowerCase().includes('withdraw')) {
-                                // Handle withdrawal
-                                return {
-                                    id: message._id,
-                                    description: message.body,
-                                    amount: amount || 0,
-                                    exptype: "others",
-                                    date: new Date(message.date),
-                                };
-                            } else if (message.body.toLowerCase().includes('payment')){
-                                // Handle payment
-                                return {
-                                    id: message._id,
-                                    description: message.body,
-                                    amount: amount || 0,
-                                    exptype: "Debt",
-                                    date: new Date(message.date),
-                                };
+                        //     } else if (message.body.toLowerCase().includes('debited by')) {
+                        //         // Handle debited transaction
+                        //         return {
+                        //             id: message._id,
+                        //             description: message.body,
+                        //             amount: amount || 0,
+                        //             exptype: "Si-fi",
+                        //             date: new Date(message.date),
+                        //         };
+                        //     } else if (message.body.toLowerCase().includes('withdraw')) {
+                        //         // Handle withdrawal
+                        //         return {
+                        //             id: message._id,
+                        //             description: message.body,
+                        //             amount: amount || 0,
+                        //             exptype: "others",
+                        //             date: new Date(message.date),
+                        //         };
+                        //     } else if (message.body.toLowerCase().includes('payment')){
+                        //         // Handle payment
+                        //         return {
+                        //             id: message._id,
+                        //             description: message.body,
+                        //             amount: amount || 0,
+                        //             exptype: "Debt",
+                        //             date: new Date(message.date),
+                        //         };
                             }
-                        });
+                        }
+                    );
                         
                 
 

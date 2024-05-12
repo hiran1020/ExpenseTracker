@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 import { LineChart } from 'react-native-chart-kit';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
@@ -11,37 +12,35 @@ const ChartSms = () => {
   const [expenseData, setExpenseData] = useState({});
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      loadExpenses();
-    }, 1000);
+    const loadExpenses = async () => {
+      try {
+        const savedExpenses = await AsyncStorage.getItem('expenses');
+        if (savedExpenses !== null) {
+          const expenses = JSON.parse(savedExpenses);
+          const groupedExpenses = groupExpensesByDate(expenses);
+          setExpenseData(groupedExpenses);
+          setError(null); // Clear any previous errors
+        } else {
+          setExpenseData({});
+        }
+      } catch (error) {
+        console.error('Error loading expenses:', error);
+        setError('Error loading expenses');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const timer = setInterval(loadExpenses, 1000);
 
     return () => clearInterval(timer);
   }, []);
 
-  const loadExpenses = async () => {
-    try {
-      const savedExpenses = await AsyncStorage.getItem('expenses');
-      if (savedExpenses !== null) {
-        const expenses = JSON.parse(savedExpenses);
-        const groupedExpenses = groupExpensesByDate(expenses);
-        setExpenseData(groupedExpenses);
-        setError(null); // Clear any previous errors
-      } else {
-        setExpenseData({});
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error loading expenses:', error);
-      setLoading(false);
-      setError('Error loading expenses');
-    }
-  };
-
   const groupExpensesByDate = (expenses) => {
     const currentDate = new Date();
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); 
-
+    const startOfWeek = moment().startOf('isoWeek'); // Set Monday as the start of the week
+  
+  
     const groupedExpenses = {
       Mon: { totalAmount: 0 },
       Tue: { totalAmount: 0 },
@@ -54,14 +53,21 @@ const ChartSms = () => {
   
     expenses.forEach((expense) => {
       const date = new Date(expense.date);
+  
       if (date >= startOfWeek && date < currentDate) {
-        const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayOfWeek = moment(date).format('ddd');
         groupedExpenses[dayOfWeek].totalAmount += expense.amount;
       }
     });
   
     return groupedExpenses;
   };
+  
+  
+  
+  
+  
+  
 
   return (
     <View>
