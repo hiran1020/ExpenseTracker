@@ -13,16 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up JDK 17.0.1
+    - name: Set up JDK 17.0.1-zulu
       uses: actions/setup-java@v1
       with:
-        java-version: 17.0.1
+        java-version: 17.0.1-zulu
 
     - name: Install dependencies
       run: npm install
 
     - name: Build APK
-      run: ./gradlew assembleRelease
+      run: cd android && ./gradlew assembleRelease
 
     - name: Upload APK to GitHub Releases
       uses: ncipollo/release-action@v1
