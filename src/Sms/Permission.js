@@ -18,7 +18,6 @@ const Permission = () => {
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('SMS permission granted');
       } else {
         console.log('SMS permission denied');
       }

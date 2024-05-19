@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
-import { PermissionsAndroid } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import SmsAndroid from 'react-native-get-sms-android';
+import { PermissionsAndroid, ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 
 const SMSComponent = ({ onSMSData }) => {
+    const [smsData, setSMSData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         fetchSMSFromInbox();
     }, []);
 
     const fetchSMSFromInbox = async () => {
         try {
+            setIsLoading(true);
+
             // Request SMS permission
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.READ_SMS,
@@ -20,134 +25,137 @@ const SMSComponent = ({ onSMSData }) => {
             );
 
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                const filter = {
-                    box: 'inbox', 
-                    // Fetch messages from the inbox
-                };
+                const filter = { box: 'inbox' };
 
                 SmsAndroid.list(
                     JSON.stringify(filter),
                     (fail) => {
-                        console.log('Failed to fetch SMS:', fail);
+                        console.error('Failed to fetch SMS:', fail);
+                        setIsLoading(false);
                     },
                     (count, smsList) => {
-                        const messages = JSON.parse(smsList);
-                        const filteredMessages = filterItems(messages);
-                        const regex = /\d+(\.\d+)?/g;
-
-                        //TODO: Search deposited,credited,withdraws,debited
-                        const smsData = filteredMessages.map((message) => {
-                            const amounts = message.body.match(regex);
-                            const amount = amounts ? parseFloat(amounts[0]) : null;
-                            const service = amounts ? parseFloat(amounts[1]) : null;
-                        
-                            if (message.body.toLowerCase().includes('service number')) {
-                                // Handle mobile top-up
-                                return {
-                                    id: message._id,
-                                    description: "Mobile Top-up to: " + amount,
-                                    amount: service || 0,
-                                    exptype: "Mobile-Top-up",
-                                    date: new Date(message.date),
-                                };
-                        //     } else if (message.body.toLowerCase().includes('debited by')) {
-                        //         // Handle debited transaction
-                        //         return {
-                        //             id: message._id,
-                        //             description: message.body,
-                        //             amount: amount || 0,
-                        //             exptype: "Si-fi",
-                        //             date: new Date(message.date),
-                        //         };
-                        //     } else if (message.body.toLowerCase().includes('withdraw')) {
-                        //         // Handle withdrawal
-                        //         return {
-                        //             id: message._id,
-                        //             description: message.body,
-                        //             amount: amount || 0,
-                        //             exptype: "others",
-                        //             date: new Date(message.date),
-                        //         };
-                        //     } else if (message.body.toLowerCase().includes('payment')){
-                        //         // Handle payment
-                        //         return {
-                        //             id: message._id,
-                        //             description: message.body,
-                        //             amount: amount || 0,
-                        //             exptype: "Debt",
-                        //             date: new Date(message.date),
-                        //         };
-                            }
+                        try {
+                            const messages = JSON.parse(smsList);
+                            const parsedSMSData = parseSMS(messages);
+                            setSMSData(parsedSMSData);
+                            onSMSData(parsedSMSData);
+                        } catch (error) {
+                            console.error('Error parsing SMS list:', error);
+                        } finally {
+                            setIsLoading(false);
                         }
-                    );
-                        
-                
-
-                        
-                        // Send the SMS data to the parent component
-                        onSMSData(smsData);
                     }
                 );
             } else {
-                console.log('SMS permission denied');
+                console.error('SMS permission denied');
+                setIsLoading(false);
             }
         } catch (error) {
             console.error('Error fetching SMS:', error);
+            setIsLoading(false);
         }
     };
 
-    const filterItems = (messages) => {
-        return messages.filter((message) => {
-            const { body } = message;
-            return body.toLowerCase().includes('debited') || 
-                   body.toLowerCase().includes('credited') || 
-                   body.toLowerCase().includes('deposited') || 
-                   body.toLowerCase().includes('withdraw') || 
-                   body.toLowerCase().includes('payment');
-        });
+    const parseSMS = (messages) => {
+        const filteredMessages = filterItems(messages);
+        return filteredMessages.map((message) => {
+            const { _id, body, date } = message;
+            let amount = 0;
+            let description = '';
+            let exptype = 'others';
+
+            const isMobileTopup = body.toLowerCase().includes('service number') && body.toLowerCase().includes('credited for');
+            const isDebit = body.toLowerCase().includes('debited');
+            const isWithdrawal = body.toLowerCase().includes('withdrawn') || body.toLowerCase().includes('cash withdraw')
+            const isPayment = body.toLowerCase().includes('payment successful');
+
+            if (isMobileTopup) {
+                const regex = /Service Number (\d+) has been credited for ([\d.]+)Rupees/;
+                const match = body.match(regex);
+                if (match) {
+                    amount = parseFloat(match[2]);
+                    description = `Mobile Top-up to: ${match[1]}`;
+                    exptype = description;
+                }
+            } else if (isDebit) {
+                const regex = /Debited by NPR ([\d,]+(?:\.\d+)?)/;
+                const match = body.match(regex);
+                if (match) {
+                    amount = parseFloat(match[1].replace(/,/g, ''));
+                    description = body;
+                    exptype = getTransactionType(body);
+                }
+            } else if (isWithdrawal) {
+                const regex = /Amount: NRP ([\d,]+(?:\.\d+)?)/;
+                const match = body.match(regex);
+                if (match) {
+                    amount = parseFloat(match[1].replace(/,/g, ''));
+                    description = body;
+                    exptype = getTransactionType(body);
+                } else {
+                    const generalRegex = /(\d{1,3}(?:,\d{3})*(?:\.\d+)?)/;
+                    const generalMatch = body.match(generalRegex);
+                    if (generalMatch) {
+                        amount = parseFloat(generalMatch[0].replace(/,/g, ''));
+                        description = body;
+                        exptype = getTransactionType(body);
+                    }
+                }
+            } else if (isPayment) {
+                const regex = /amount (\d{1,3}(?:,\d{3})*(?:\.\d+)?)/;
+                const match = body.match(regex);
+                if (match) {
+                    amount = parseFloat(match[1].replace(/,/g, ''));
+                    description = body;
+                    exptype = getTransactionType(body);
+                }
+            } else {
+                const regex = /\d+(\.\d+)?/g;
+                const amounts = body.match(regex);
+                if (amounts) {
+                    amount = parseFloat(amounts[0]);
+                }
+                description = body;
+                exptype = getTransactionType(body);
+            }
+
+            return {
+                id: _id,
+                description,
+                amount: amount || 0,
+                exptype,
+                date: new Date(date),
+            };
+        }).filter(Boolean);
     };
-    
 
-    return null; // Or render your component UI here
+    const filterItems = (messages) => {
+        const keywordsRegex = /(debited|number|payment|withdraw|withdrawn)/i;
+        return messages.filter((message) => keywordsRegex.test(message.body));
+    };
+
+    const getTransactionType = (messageBody) => {
+        const keywords = {
+            'debited': 'Si-fi',
+            'withdraw': 'others',
+            'payment': 'Debt',
+        };
+
+        const lowercaseMessage = messageBody.toLowerCase();
+
+        for (const keyword in keywords) {
+            if (lowercaseMessage.includes(keyword)) {
+                return keywords[keyword];
+            }
+        }
+
+        return 'payment'; // default type if no keyword is matched
+    };
+
+    if (isLoading) {
+        return <ActivityIndicator size="large" color="#0000ff" />;
+    }
+
+    return 
 };
-
 export default SMSComponent;
-
-
-
-
-
-
-// data examples
-// {
-//   "_id": 27,
-//   "address": "1415",
-//   "advanced_seen": 3,
-//   "b2c_ttl": 0,
-//   "bind_id": 0,
-//   "block_type": 0,
-//   "body": "Service Number 9765305469 has been credited for 58.82Rupees, your new balance is 59.84Rupees , Transaction ID:ESEWA0000647101973. -NT",
-//   "date": 1672392846947,
-//   "date_sent": 1672392838000,
-//   "deleted": 0,
-//   "error_code": 0,
-//   "fake_cell_type": 0,
-//   "favorite_date": 0,
-//   "locked": 0,
-//   "marker": 0,
-//   "mx_status": 0,
-//   "out_time": 0,
-//   "protocol": 0,
-//   "read": 1,
-//   "reply_path_present": 0,
-//   "seen": 1,
-//   "service_center": "+9779851028801",
-//   "sim_id": 1,
-//   "status": -1,
-//   "sub_id": 1,
-//   "sync_state": 0,
-//   "thread_id": 7,
-//   "timed": 0,
-//   "type": 1,
-//   "url_risky_type": 0
-// }
