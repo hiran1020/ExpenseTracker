@@ -34,3 +34,12 @@ jobs:
         body: "New release of the app"
         draft: true
         prerelease: false
+
+    - name: CodePush release
+      env:
+        CODEPUSH_APP_NAME: ${{ secrets.CODEPUSH_APP_NAME }}
+        CODEPUSH_DEPLOYMENT_NAME: ${{ secrets.CODEPUSH_DEPLOYMENT_NAME }}
+        CODEPUSH_ACCESS_KEY: ${{ secrets.CODEPUSH_ACCESS_KEY }}
+      run: |
+        appcenter codepush release-react -a $CODEPUSH_APP_NAME -d $CODEPUSH_DEPLOYMENT_NAME --token $CODEPUSH_ACCESS_KEY
+
