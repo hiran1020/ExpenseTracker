@@ -29,8 +29,8 @@ jobs:
       with:
         artifacts: app/build/outputs/apk/release/app-release.apk
         token: ${{ secrets.RELEASE_TOKEN }}
-        tag: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag: v1.0.0
+        name: Release v1.0.0
         body: "New release of the app"
-        draft: false
+        draft: true
         prerelease: false
