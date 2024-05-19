@@ -57,4 +57,4 @@ jobs:
         CODEPUSH_DEPLOYMENT_NAME: ${{ secrets.CODEPUSH_DEPLOYMENT_NAME }}
         CODEPUSH_ACCESS_KEY: ${{ secrets.CODEPUSH_ACCESS_KEY }}
       run: |
-        npx appcenter codepush release-react -a $CODEPUSH_APP_NAME -d $CODEPUSH_DEPLOYMENT_NAME --token $CODEPUSH_ACCESS_KEY
+        npm appcenter codepush release-react -a $CODEPUSH_APP_NAME -d $CODEPUSH_DEPLOYMENT_NAME --token $CODEPUSH_ACCESS_KEY
