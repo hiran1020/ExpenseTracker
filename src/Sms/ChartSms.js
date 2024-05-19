@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import { LineChart } from 'react-native-chart-kit';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles from '../Styles';
 
@@ -73,7 +73,7 @@ const ChartSms = () => {
     <View>
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="rgba(14,164,164,0.5)" />
         </View>
       ) : error ? (
         <View style={styles.errorContainer}>
@@ -91,16 +91,15 @@ const ChartSms = () => {
               }}
               width={500}
               height={256}
-              verticalLabelRotation={1}
+              verticalLabelRotation={9}
               chartConfig={{
                 backgroundGradientFrom: "#1E2923",
-                backgroundGradientFromOpacity: 0,
-                backgroundGradientTo: "#08130D",
-                backgroundGradientToOpacity: 0.5,
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                strokeWidth: 2,
-                barPercentage: 0.5,
-                useShadowColorFromDataset: false,
+                backgroundGradientFromOpacity: 8,
+                // backgroundGradientTo: "#08130D",
+                backgroundGradientToOpacity: 1.5,
+                color: (opacity = 1) => `rgba(14,164,164,0.5), ${opacity})`,
+                barPercentage: 1,
+                useShadowColorFromDataset: true,
               }}
               bezier
             />

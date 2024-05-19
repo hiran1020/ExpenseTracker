@@ -4,12 +4,12 @@ const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
 
-    container: {
-        flex: 1,
-        backgroundColor: 'dark',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+    // container: {
+    //     flex: 1,
+    //     backgroundColor: 'dark',
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    // },
     title:{
         borderColor:'black',
         borderWidth:1,

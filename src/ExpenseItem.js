@@ -7,17 +7,19 @@ import styles from './Styles';
 import DatePick from './DatePicker';
 import ChartSms from './Sms/ChartSms';
 import ExpenseList from './ExpenseList';
+import Permission from './Sms/Permission';
 import ExpenseTracker from './ExpenseTracker';
 import DropdownReason from  './DropdownReason';
 import SMSComponent from './Sms/NotificationListner';
+import ExpenseTrackerChart from './Sms/ExpenseTrackerChart'
 
 
 const ExpenseItem = () => {
     const currentUser = auth().currentUser;
     const [amount, setAmount] = useState('');
     const [exptype, setExptype] = useState('');
-    const [date, setDate] = useState(new Date());
     const [chartData,setChartData]=useState([]);
+    const [date, setDate] = useState(new Date());
     const [description, setDescription] = useState('');
     const [expenseData, setExpenseData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,11 +119,20 @@ const ExpenseItem = () => {
         setExptype(expType); // Set the selected expense type
       };
 
-    const calculateTotalExpenses = (expenses) => {
+      const calculateTotalExpenses = (expenses) => {
         let total = 0;
         if (expenses) {
+            const currentDate = new Date();
+            const sevenDaysAgo = new Date(currentDate);
+            sevenDaysAgo.setDate(currentDate.getDate() - 7);
+            //extract of seven days only
+            console.log(sevenDaysAgo)
+    
             Object.values(expenses).forEach((expense) => {
-                total += expense.amount;
+                const expenseDate = new Date(expense.date);
+                if (expenseDate >= sevenDaysAgo && expenseDate <= currentDate) {
+                    total += expense.amount;
+                }
             });
         }
         return total;
@@ -202,6 +213,7 @@ const ExpenseItem = () => {
                      />
 
                 <SMSComponent onSMSData={handleSMSData} />
+                <Permission />
                 <TouchableOpacity  onPress={handleAddExpense}>
                     <Text style={styles.btnText}>Add Expense</Text>
                 </TouchableOpacity>
@@ -209,7 +221,7 @@ const ExpenseItem = () => {
             </View>
             <Text style={styles.totalExpenses}>Total Expenses: ${totalExpenses.toFixed(2)}</Text>
             <View>
-                    <ChartSms {...DateFilter} />
+            <ChartSms {...DateFilter} />
             </View>
             <TouchableOpacity onPress={openModal}>
                 <Text style={styles.btnTextModel}>View Statements</Text>
@@ -221,13 +233,13 @@ const ExpenseItem = () => {
             onRequestClose={closeModal} >
                 <View style={{backgroundColor:'#2a2929',flex:1,justifyContent:'space-evenly'}}>
 
+
+                    <View style={styles.btn}> 
+
+                        <ExpenseTrackerChart {...DateFilter} />
                     <View>
                         <ExpenseList {...DateFilter} />
                     </View>
-
-                    <View style={styles.btn}> 
-                    <ChartSms {...DateFilter} />
-
                     </View>
                 <TouchableOpacity onPress={closeModal}><Text style={styles.btnText}>Close</Text></TouchableOpacity>
                 </View>

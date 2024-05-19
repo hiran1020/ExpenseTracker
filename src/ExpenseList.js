@@ -28,7 +28,6 @@ const ExpenseList = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-
   const groupExpensesByDate = (expenses) => {
     const groupedExpenses = {};
     expenses.forEach((expense) => {
@@ -46,33 +45,34 @@ const ExpenseList = () => {
     });
     return groupedExpenses;
   };
-  
+
+  // Sort the expenseData keys in descending order
+  const sortedDates = Object.keys(expenseData).sort((a, b) => new Date(b) - new Date(a));
 
   return (
     <View style={styles.expenseList}>
       <FlatList
-  data={Object.keys(expenseData).sort((a, b) => new Date(b) - new Date(a))}
-  keyExtractor={(item) => item}
-  ListEmptyComponent={<Text style={styles.btnText}>No Expenses Yet !!!</Text>}
-  renderItem={({ item }) => (
-    <>
-      <Text style={styles.dateGroup}>{item}</Text>
-      <Text style={styles.dateAmount}>Total: {expenseData[item].totalAmount}</Text>
-      {expenseData[item].expenses.map((expense, index) => (
-        <View style={styles.itemList} key={index}>
-          <View style={styles.descView}>
-            <Text style={styles.desc}>{expense.exptype}</Text>
-          </View>
-          <View style={styles.amtView}>
-            <Text style={styles.amt}>-{expense.amount}</Text>
-            <Text style={styles.date}>{new Date(expense.date).toLocaleTimeString()}</Text>
-          </View>
-        </View>
-      ))}
-    </>
-  )}
-/>
-
+        data={sortedDates}
+        keyExtractor={(item) => item}
+        ListEmptyComponent={<Text style={styles.btnText}>No Expenses Yet !!!</Text>}
+        renderItem={({ item }) => (
+          <>
+            <Text style={styles.dateGroup}>{item}</Text>
+            <Text style={styles.dateAmount}>Total: {expenseData[item].totalAmount}</Text>
+            {expenseData[item].expenses.map((expense, index) => (
+              <View style={styles.itemList} key={index}>
+                <View style={styles.descView}>
+                  <Text style={styles.desc}>{expense.exptype}</Text>
+                </View>
+                <View style={styles.amtView}>
+                  <Text style={styles.amt}>-${expense.amount}</Text>
+                  <Text style={styles.date}>{new Date(expense.date).toLocaleTimeString()}</Text>
+                </View> 
+              </View>
+            ))}
+          </>
+        )}
+      />
     </View>
   );
 };
