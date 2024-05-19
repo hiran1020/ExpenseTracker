@@ -16,7 +16,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '14'  # Adjust to the Node.js version your project requires
+        node-version: '20'  # Adjust to the Node.js version your project requires
 
     - name: Set up JDK 17
       uses: actions/setup-java@v3
